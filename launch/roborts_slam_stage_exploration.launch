@@ -1,0 +1,22 @@
+<launch>
+    <param name="use_sim_time" value="true"/>
+    <rosparam  command="load" file="$(find roborts_slam)/config/simulatin_param.yaml" />
+
+    <node pkg="stage_ros" type="stageros" name="stageros" args="$(find roborts_slam)/worlds/rm.world" respawn="false" >
+        <remap from="base_scan" to="scan"/>
+        <param name="base_watchdog_timeout" value="0.5" />
+    </node>
+
+    <node pkg="roborts_planning" type="local_planner_node" name="local_planner_node" respawn="true" />
+    <node pkg="roborts_planning" type="global_planner_node" name="global_planner_node" respawn="true" />
+    <node pkg="roborts_planning" type="vel_converter" name="vel_converter" respawn="true" />
+    <!--<node pkg="roborts_decision" type="behavior_test_node" name="behavior_test_node" respawn="false" />-->
+    <node pkg="frontier_exploration" type="frontier_exploration_node" name="frontier_exploration_node" respawn="false" >
+    </node>>
+
+
+    <node pkg="roborts_slam" type="roborts_slam_node" name="roborts_slam_node" respawn="false" />
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find roborts_slam)/rviz/rviz.rviz" />
+
+</launch>

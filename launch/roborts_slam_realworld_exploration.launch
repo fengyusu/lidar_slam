@@ -1,0 +1,29 @@
+<launch>
+    <param name="use_sim_time" value="false"/>
+
+    <rosparam  command="load" file="$(find roborts_slam)/config/real_robot_param.yaml" />
+
+    <node pkg="roborts_planning" type="local_planner_node" name="local_planner_node" respawn="true" />
+    <node pkg="roborts_planning" type="global_planner_node" name="global_planner_node" respawn="true" />
+    <node pkg="roborts_planning" type="vel_converter" name="vel_converter" respawn="true" />
+    <node pkg="frontier_exploration" type="frontier_exploration_node" name="frontier_exploration_node" respawn="true" > </node>>
+    <node name="roborts_base_node" pkg="roborts_base" type="roborts_base_node" respawn="false" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_base_laser_link_broadcaster"
+          args="0.0 0.07 0.1 0.0 0.0 0.0 base_link base_laser_link" />
+
+    <node name="rplidar_node" pkg="rplidar_ros" type="rplidarNode" output="screen">
+        <param name="serial_port" type="string" value="/dev/rplidar"/>
+        <param name="serial_baudrate" type="int" value="115200"/>
+        <param name="frame_id" type="string" value="base_laser_link"/>
+        <param name="inverted" type="bool" value="false"/>
+        <param name="angle_compensate" type="bool" value="true"/>
+    </node>
+
+    <node name="roborts_slam_node" pkg="roborts_slam"  type="roborts_slam_node" output="screen" >
+        <remap from="scan" to="scan" />
+    </node>
+
+    <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find roborts_slam)/rviz/rviz.rviz" />-->
+
+</launch>
+
